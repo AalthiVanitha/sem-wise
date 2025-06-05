@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Result Analysis</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h2>CSE E-2027-SEM3-REG Result Analysis</h2>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", function () {
+        fetch("/analyze")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("API Response:", data);
+
+            let resultDiv = document.getElementById("result");
+
+            if (data.success) {
+              resultDiv.innerHTML = `
+                        <table>
+                            <tr>
+                                <th>Total Students</th>
+                                <td>${data.total_students}</td>
+                            </tr>
+                            <tr>
+                                <th>Passed Students</th>
+                                <td>${data.passed_students}</td>
+                            </tr>
+                            <tr>
+                                <th>Failed Students</th>
+                                <td>${data.failed_students}</td>
+                            </tr>
+                            <tr>
+                                <th>Pass Percentage</th>
+                                <td>${data.pass_percentage}%</td>
+                            </tr>
+                            <tr>
+                                <th>Fail Percentage</th>
+                                <td>${data.fail_percentage}%</td>
+                            </tr>
+                        </table>
+                    `;
+            } else {
+              resultDiv.innerHTML = `<h3 style='color:red;'>Error: ${data.error}</h3>`;
+            }
+          })
+          .catch((error) => {
+            console.error("Fetch Error:", error);
+            document.getElementById("result").innerHTML =
+              "<h3 style='color:red;'>Failed to fetch results.</h3>";
+          });
+      });
+    </script>
+  </body>
+</html>
